@@ -31,6 +31,7 @@ LIBDCS_CORE_VAPI_SOURCE_FILES = \
     dcs-plugin-manager.vala \
     dcs-point.vala \
     dcs-ref-container.vala \
+    dcs-ref-linker.vala \
     dcs-serializable.vala \
     dcs-view.vala
 

@@ -22,7 +22,7 @@ example_LDADD = \
 	$(LIBDCS_CORE_LIBS) \
 	$(top_builddir)/src/libdcs-core/libdcs-core-0.2.la
 
-noinst_PROGRAMS += config-node factory
+noinst_PROGRAMS += config-node factory ref-linker
 
 config_node_SOURCES = config-node.vala
 config_node_DEPENDENCIES = $(example_DEPENDENCIES)
@@ -35,6 +35,13 @@ factory_DEPENDENCIES = $(example_DEPENDENCIES)
 factory_VALAFLAGS = $(example_VALAFLAGS)
 factory_CPPFLAGS = $(example_CFLAGS)
 factory_LDADD = $(example_LDADD)
+
+ref_linker_SOURCES = ref-linker.vala
+ref_linker_DEPENDENCIES = $(example_DEPENDENCIES)
+ref_linker_VALAFLAGS = $(example_VALAFLAGS)
+ref_linker_CPPFLAGS = $(example_CFLAGS)
+ref_linker_LDADD = $(example_LDADD)
+
 
 if ENABLE_UI
 

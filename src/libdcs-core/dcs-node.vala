@@ -59,6 +59,17 @@ public abstract class Dcs.Node : Gee.TreeMap<string, Dcs.Node>,
     public signal void request_node (string id);
 
     /**
+     * Used by implementing class to request an reference node for addition.
+     *
+     * @param pa
+     */
+
+
+    construct {
+        references = new Gee.ArrayList<unowned Dcs.Node> ();
+    }
+
+    /**
      * {@inheritDoc}
      */
     public override void @set (string key, Dcs.Node node) {

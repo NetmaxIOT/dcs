@@ -9,7 +9,7 @@ public class Dcs.RefLinker : GLib.Object {
         bool satisfied;     // whether or not the reference is fulfilled
     }
 
-    private List<Entry> table;
+    private Gee.List<Entry?> table;
 
     private static Once<Dcs.RefLinker> _instance;
 
@@ -27,16 +27,18 @@ public class Dcs.RefLinker : GLib.Object {
      *
      * @param nodes List of nodes to process internal reference requests.
      */
-    public static void process_nodes (Gee.Container<Dcs.Node> nodes) {
+    public static void process_nodes (Dcs.Node node) {
         // ideas
         // - construct table of nodes and references
         //   take table and turn reference to absolute path
         //   get node at path as week ref
-        foreach (var node in nodes) {
-            node.reference_added.connect (do_something);
-            foreach (var @ref in node.get_references ()) {
-                // not sure what to do
-            }
-        }
+        /*
+         *foreach (var node in nodes) {
+         *    node.reference_added.connect (do_something);
+         *    foreach (var @ref in node.get_references ()) {
+         *        // not sure what to do
+         *    }
+         *}
+         */
     }
 }
