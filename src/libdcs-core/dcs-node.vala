@@ -1,6 +1,7 @@
 public errordomain Dcs.NodeError {
     PARENT_EXISTS,
-    CIRCULAR_REFERENCE
+    CIRCULAR_REFERENCE,
+    NULL_REFERENCE
 }
 
 public abstract class Dcs.Node : Gee.TreeMap<string, Dcs.Node>,
@@ -61,9 +62,9 @@ public abstract class Dcs.Node : Gee.TreeMap<string, Dcs.Node>,
     /**
      * Used by implementing class to request an reference node for addition.
      *
-     * @param pa
+     * @param id the ID of the reference node that was requested
      */
-
+    public signal void request_reference (string id);
 
     construct {
         references = new Gee.ArrayList<unowned Dcs.Node> ();
@@ -139,6 +140,41 @@ public abstract class Dcs.Node : Gee.TreeMap<string, Dcs.Node>,
         base.unset (node.id, out value);
         value.parent = null;
         node_removed (node.id);
+    }
+
+    /**
+     * Get a node from a path identifier
+     *
+     * @param path A path to a node
+     *
+     * @return A node with the given path
+     */
+    public virtual Dcs.Node retrieve (string path) throws Dcs.NodeError {
+        Dcs.Node? result = this;
+        string [] tokens;
+        string p = path;
+
+        if (path.has_prefix ("/")) {
+            p  = path.substring (1, path.length - 1);
+        }
+
+        tokens = p.split ("/");
+        if (tokens[0] == id) {
+            for (int i = 1; i < tokens.length; i++) {
+                var next = result.get (tokens[i]);
+                if (next != null) {
+                    result = next;
+                } else {
+                    result = null;
+                }
+                if (result == null) {
+                throw new Dcs.NodeError.NULL_REFERENCE (
+                                         "Node with path %s does not exist", p);
+                }
+            }
+        }
+
+        return result;
     }
 
     /**

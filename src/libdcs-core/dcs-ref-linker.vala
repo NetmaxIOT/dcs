@@ -2,11 +2,10 @@ public class Dcs.RefLinker : GLib.Object {
 
     // node id | ref | path | satisfied
 
-    private struct Entry {
-        string id;          // requestor id
-        string @ref;        // reference requested
-        string path;        // path to reference node
-        bool satisfied;     // whether or not the reference is fulfilled
+    private class Entry {
+        public string path;          // path to node
+        public string reference;        // path to reference node
+        public bool satisfied;     // whether or not the reference is fulfilled
     }
 
     private Gee.List<Entry?> table;
@@ -22,12 +21,70 @@ public class Dcs.RefLinker : GLib.Object {
         return _instance.once (() => { return new Dcs.RefLinker (); });
     }
 
+    construct {
+        table = new Gee.ArrayList<Entry?> ();
+    }
+
+    /**
+     * Add a reference link to the reference table
+     *
+     * @param path The absolute path of to the referencing node
+     * @param reference The absolute path to the refereced node
+     */
+    public void add_entry (string path, string reference) {
+        Entry entry = new Entry ();
+        entry.path = path;
+        entry.reference = reference;
+        entry.satisfied = false;
+        table.add (entry);
+    }
+
+    /**
+     * Print the reference table.
+     */
+    public void print_table  () {
+        stdout.printf ("path\t\treference\t\tsatisfied\n");
+        foreach (var entry in table) {
+            stdout.printf ("%s\t\t%s\t\t%s\n", entry.path, entry.reference, entry.satisfied.to_string ());
+        }
+    }
+
     /**
      * TODO fill in
      *
-     * @param nodes List of nodes to process internal reference requests.
+     * Links references from the reference table to nodes
+     *
+     * @param node A Dcs.Node to be processed
+     *
+     * @return true if all references are satisfied otherwise false
      */
-    public static void process_nodes (Dcs.Node node) {
+    public bool process_node (Dcs.Node node) throws Dcs.NodeError {
+        var satisfied = true;
+
+        foreach (var entry in table) {
+            if (!entry.satisfied) {
+                Dcs.Node nd;
+                Dcs.Node reference;
+                try {
+                    nd = node.retrieve (entry.path);
+                    try {
+                        reference = node.retrieve (entry.reference);
+                    } catch (Dcs.NodeError e) {
+                        throw e;
+                    }
+
+                    if ((nd != null) && (reference != null)) {
+                        nd.add_reference (reference);
+                        entry.satisfied = true;
+                    } else {
+                        satisfied = false;
+                    }
+                } catch (Dcs.NodeError e) {
+                    throw e;
+                }
+
+            }
+        }
         // ideas
         // - construct table of nodes and references
         //   take table and turn reference to absolute path
@@ -40,5 +97,7 @@ public class Dcs.RefLinker : GLib.Object {
          *    }
          *}
          */
+
+         return satisfied;
     }
 }
