@@ -3,7 +3,7 @@ public interface Dcs.RefContainer : GLib.Object {
     /**
      * The list of references to objects.
      */
-    protected abstract Gee.List<unowned Dcs.Node> references { get; private set; }
+    public abstract Gee.List<unowned Dcs.Node> references { get; private set; }
 
     /**
      * Add a reference to the list.
